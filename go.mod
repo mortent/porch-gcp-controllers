@@ -1,4 +1,4 @@
-module github.com/nephio-project/porch/controllers
+module github.com/efiacor/porch-gcp-controllers
 
 go 1.22
 
