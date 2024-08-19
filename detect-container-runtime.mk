@@ -1,4 +1,4 @@
-#  Copyright 2023 - 2024 The Nephio Authors.
+#  Copyright 2023 The Nephio Authors.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,15 +11,17 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-GIT_ROOT_DIR ?= $(dir $(lastword $(MAKEFILE_LIST)))
-include $(GIT_ROOT_DIR)/detect-container-runtime.mk
 
-##@ Container images
 
-.PHONY: docker-build
-docker-build:  ## Build a container image from the local Dockerfile
-	$(CONTAINER_RUNTIME) buildx build --load --tag  ${IMG} -f ./Dockerfile "$(GIT_ROOT_DIR)"
+# detects if a container runtime is present, so that we can run tests, linters, etc. inside containers
+ifeq ($(CONTAINER_RUNTIME),)
+ifeq ($(shell command -v podman > /dev/null 2>&1; echo $$?), 0)
+CONTAINER_RUNTIME=podman
+else
+CONTAINER_RUNTIME=docker
+endif
+endif
 
-.PHONY: docker-push
-docker-push: docker-build ## Build and push the container image
-	$(CONTAINER_RUNTIME) push ${IMG}
+CONTAINER_RUNNABLE ?= $(shell command -v $(CONTAINER_RUNTIME) > /dev/null 2>&1; echo $$?)
+
+RUN_CONTAINER_COMMAND ?= $(CONTAINER_RUNTIME) run -it --rm -v "$(abspath $(GIT_ROOT_DIR)):$(abspath $(GIT_ROOT_DIR))" -w "$(CURDIR)" --security-opt label=disable 

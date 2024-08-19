@@ -129,7 +129,7 @@ func run(ctx context.Context) error {
 		}),
 		HealthProbeBindAddress:     ":8081",
 		LeaderElection:             false,
-		LeaderElectionID:           "porch-operators.config.porch.kpt.dev",
+		LeaderElectionID:           "porch-gcp-operators.config.porch.kpt.dev",
 		LeaderElectionResourceLock: resourcelock.LeasesResourceLock,
 		MapperProvider:             controllerrestmapper.New,
 		Client: client.Options{
