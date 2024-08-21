@@ -713,6 +713,6 @@ func (r *FleetSyncReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&v1alpha1.FleetMembership{}).
 		Owns(&v1alpha1.FleetScope{}).
 		Owns(&v1alpha1.FleetMembershipBinding{}).
-		WatchesRawSource(&source.Channel{Source: channel}, &handler.EnqueueRequestForObject{}).
+		WatchesRawSource(source.Channel(channel, &handler.EnqueueRequestForObject{})).
 		Complete(r)
 }
